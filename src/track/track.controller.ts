@@ -3,40 +3,156 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
 
 import { TrackModel } from './track.model';
+import { Response } from 'express';
+import { isIdValid } from '../utils/common-utils';
+import { tracksData } from './data/track.data';
+import { getTrack } from './utils/helper';
 
 @Controller('track')
 export class TrackController {
   @Get()
   async getAllTracks() {
-    return [];
+    return tracksData;
   }
 
   @Get(':id')
-  async getTrackById(@Param('id') id: string) {
-    return {};
+  async getTrackById(@Param('id') id: string, @Res() response: Response) {
+    if (!(await isIdValid(id))) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('id parameter is invalid (not uuid)');
+    }
+
+    const track: TrackModel = tracksData.find(
+      (element: TrackModel) => element.id === id,
+    );
+
+    if (track) {
+      return response.status(HttpStatus.OK).send(track);
+    }
+
+    return response.status(HttpStatus.NOT_FOUND).send('Track not found');
   }
 
   @Post()
-  async CreateTrackDto(@Body() dto: Omit<TrackModel, 'id'>) {
-    return {};
+  async CreateTrackDto(
+    @Body() dto: Omit<TrackModel, 'id'>,
+    @Res() response: Response,
+  ) {
+    if (dto.albumId === undefined) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "albumId" is missing');
+    }
+
+    if (dto.artistId === undefined) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "artistId" is missing');
+    }
+
+    if (!dto.name) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "name" is missing');
+    }
+
+    if (!dto.duration) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "duration" is missing');
+    }
+
+    const newTrack = await getTrack(
+      dto.albumId,
+      dto.artistId,
+      dto.name,
+      dto.duration,
+    );
+    tracksData.push(newTrack);
+    return response.status(HttpStatus.CREATED).send(newTrack);
   }
 
   @Put(':id')
   async updateTrackInfo(
     @Param('id') id: string,
     @Body() dto: Omit<TrackModel, 'id'>,
+    @Res() response: Response,
   ) {
-    return {};
+    if (!(await isIdValid(id))) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('id parameter is invalid (not uuid)');
+    }
+
+    if (dto.albumId === undefined) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "albumId" is missing');
+    }
+
+    if (dto.artistId === undefined) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "artistId" is missing');
+    }
+
+    if (!dto.name) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "name" is missing');
+    }
+
+    if (!dto.duration) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('required parameter "duration" is missing');
+    }
+
+    const putedTrackIndex = tracksData.findIndex(
+      (element: TrackModel) => element.id === id,
+    );
+
+    if (putedTrackIndex === -1) {
+      return response.status(HttpStatus.NOT_FOUND).send('Track not found');
+    }
+
+    tracksData[putedTrackIndex].albumId = dto.albumId;
+    tracksData[putedTrackIndex].artistId = dto.artistId;
+    tracksData[putedTrackIndex].duration = dto.duration;
+    tracksData[putedTrackIndex].name = dto.name;
+
+    return response.status(HttpStatus.OK).send(tracksData[putedTrackIndex]);
   }
 
   @Delete(':id')
-  async deleteTrackById(@Param('id') id: string) {
-    return {};
+  async deleteTrackById(@Param('id') id: string, @Res() response: Response) {
+    if (!(await isIdValid(id))) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('id parameter is invalid (not uuid)');
+    }
+
+    const deletedTrackIndex = tracksData.findIndex(
+      (element: TrackModel) => element.id === id,
+    );
+
+    if (deletedTrackIndex === -1) {
+      return response.status(HttpStatus.NOT_FOUND).send('Track not found');
+    }
+
+    tracksData.splice(deletedTrackIndex, 1);
+
+    return response
+      .status(HttpStatus.NO_CONTENT)
+      .send('Track successfully deleted');
   }
 }
