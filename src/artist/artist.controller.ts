@@ -13,7 +13,7 @@ import {
 import { ArtistModel } from './artist.model';
 import { artistsData } from './data/artist.data';
 import { Response } from 'express';
-import { isIdValid } from '../utils/common-utils';
+import { isIdValid, delArtistFromFavorites } from '../utils/common-utils';
 import { getArtist } from './utils/helper';
 
 @Controller('artist')
@@ -116,6 +116,7 @@ export class ArtistController {
     }
 
     artistsData.splice(deletedArtistIndex, 1);
+    await delArtistFromFavorites(id);
 
     return response
       .status(HttpStatus.NO_CONTENT)
