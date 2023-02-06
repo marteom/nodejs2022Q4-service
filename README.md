@@ -9,6 +9,8 @@
 
 ```
 git clone {repository URL}
+
+Go to development branch.
 ```
 
 ## Installing NPM modules
@@ -17,56 +19,22 @@ git clone {repository URL}
 npm install
 ```
 
+## Configuration
+Create .env file (example .env.example). Use variables from it if necessary.
+
 ## Running application
 
 ```
-npm start
+npm start or npm start:dev
 ```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
-After application running open new terminal and enter:
+Use postman for check api.
 
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
-
-```
-npm run lint
-```
-
-```
-npm run format
-```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+Working api routes:
+- /user
+- /track
+- /artist
+- /album
+- /favs
