@@ -47,16 +47,17 @@ export class TrackController {
     @Body() dto: Omit<TrackModel, 'id'>,
     @Res() response: Response,
   ) {
-    if (dto.albumId === undefined) {
+
+    if (dto.albumId === undefined || !(dto.albumId === null ? true : await isIdValid(dto.albumId))) {
       return response
         .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "albumId" is missing');
+        .send('required parameter "albumId" is missing or invalid (not uuid)');
     }
 
-    if (dto.artistId === undefined) {
+    if (dto.artistId === undefined || !(dto.artistId === null ? true : await isIdValid(dto.artistId))) {
       return response
         .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "artistId" is missing');
+        .send('required parameter "artistId" is missing or invalid (not uuid)');
     }
 
     if (!dto.name) {
@@ -93,16 +94,16 @@ export class TrackController {
         .send('id parameter is invalid (not uuid)');
     }
 
-    if (dto.albumId === undefined) {
+    if (dto.albumId === undefined || !(dto.albumId === null ? true : await isIdValid(dto.albumId))) {
       return response
         .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "albumId" is missing');
+        .send('required parameter "albumId" is missing or invalid (not uuid)');
     }
 
-    if (dto.artistId === undefined) {
+    if (dto.artistId === undefined || !(dto.artistId === null ? true : await isIdValid(dto.artistId))) {
       return response
         .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "artistId" is missing');
+        .send('required parameter "artistId" is missing or invalid (not uuid)');
     }
 
     if (!dto.name) {
