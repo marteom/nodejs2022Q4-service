@@ -5,6 +5,8 @@ import { AlbumModel } from 'src/album/album.model';
 import { TrackModel } from 'src/track/track.model';
 
 import { favoritesData } from 'src/favorites/data/favorites.data';
+import { albumsData } from 'src/album/data/album.data';
+import { tracksData } from 'src/track/data/track.data';
 
 export const isIdValid = async (id: string): Promise<boolean> => {
   return uuidValidate(id);
@@ -45,4 +47,12 @@ export const getArtistsArray = async (artistsData: Array<ArtistModel>, artistLis
 
 export const delArtistFromFavorites = async (artistId: string): Promise<void> => {
   favoritesData.artists = favoritesData.artists.filter(id => id !== artistId);
+}
+
+export const delAlbumFromFavorites = async (albumId: string): Promise<void> => {
+  favoritesData.albums = favoritesData.albums.filter(id => id !== albumId);
+}
+
+export const delTrackFromFavorites = async (trackId: string): Promise<void> => {
+  favoritesData.tracks = favoritesData.tracks.filter(id => id !== trackId);
 }

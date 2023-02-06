@@ -15,6 +15,7 @@ import { albumsData } from './data/album.data';
 import { Response } from 'express';
 import { isIdValid } from '../utils/common-utils';
 import { getAlbum } from './utils/helper';
+import { delAlbumFromFavorites } from '../utils/common-utils';
 
 @Controller('album')
 export class AlbumController {
@@ -135,6 +136,7 @@ export class AlbumController {
     }
 
     albumsData.splice(deletedAlbumIndex, 1);
+    await delAlbumFromFavorites(id);
 
     return response
       .status(HttpStatus.NO_CONTENT)
