@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TrackController } from './track.controller';
 
-@Module({})
+@Module({
+  controllers: [TrackController],
+})
 export class TrackModule {}

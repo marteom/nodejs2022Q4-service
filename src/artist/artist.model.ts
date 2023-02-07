@@ -1,5 +1,5 @@
 export class ArtistModel {
-    id: string;
-    name: string;
-    grammy: boolean;
+  id: string;
+  name: string;
+  grammy: boolean;
 }

@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ArtistController } from './artist.controller';
 
-@Module({})
+@Module({
+  controllers: [ArtistController],
+})
 export class ArtistModule {}
