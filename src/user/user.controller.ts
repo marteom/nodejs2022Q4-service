@@ -2,133 +2,47 @@ import {
   Body,
   Controller,
   Delete,
+  HttpCode,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import { UserModel } from './user.model';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { usersData } from './data/user.data';
-import { getUser } from './utils/helper';
-import { Response } from 'express';
-import { isIdValid } from '../utils/common-utils';
+import { UserService } from './user.service';
+import { HttpStatus } from '@nestjs/common/enums';
 
 @Controller('user')
 export class UserController {
+  constructor(private userService: UserService) {}
+
   @Get()
   async getAllUsers() {
-    return usersData;
+    return this.userService.getAllUsers();
   }
 
   @Get(':id')
-  async getUserById(@Param('id') id: string, @Res() response: Response) {
-    if (!(await isIdValid(id))) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('id parameter is invalid (not uuid)');
-    }
-
-    const user: UserModel = usersData.find(
-      (element: UserModel) => element.id === id,
-    );
-
-    if (user) {
-      return response.status(HttpStatus.OK).send(user);
-    }
-
-    return response.status(HttpStatus.NOT_FOUND).send('User not found');
+  async getUserById(@Param('id') id: string) {
+    return this.userService.getUserById(id);
   }
 
   @Post()
-  async CreateUserDto(
-    @Body() dto: Pick<UserModel, 'login' | 'password'>,
-    @Res() response: Response,
-  ) {
-    if (!dto.login) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "login" is missing');
-    }
-
-    if (!dto.password) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "password" is missing');
-    }
-
-    const newUser = await getUser(dto.login, dto.password);
-    usersData.push(newUser);
-    return response.status(HttpStatus.CREATED).send(newUser);
+  async CreateUserDto(@Body() dto: Pick<UserModel, 'login' | 'password'>) {
+    return this.userService.createUser(dto);
   }
 
   @Put(':id')
   async updateUserPasword(
     @Param('id') id: string,
     @Body() dto: UpdatePasswordDto,
-    @Res() response: Response,
   ) {
-    if (!(await isIdValid(id))) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('id parameter is invalid (not uuid)');
-    }
-
-    if (!dto.oldPassword) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "oldPassword" is missing');
-    }
-
-    if (!dto.newPassword) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('required parameter "newPassword" is missing');
-    }
-
-    const putedUserIndex = usersData.findIndex(
-      (element: UserModel) => element.id === id,
-    );
-
-    if (putedUserIndex === -1) {
-      return response.status(HttpStatus.NOT_FOUND).send('User not found');
-    }
-
-    if (usersData[putedUserIndex].password !== dto.oldPassword) {
-      return response
-        .status(HttpStatus.FORBIDDEN)
-        .send('oldPassword is incorrect');
-    }
-
-    usersData[putedUserIndex].password = dto.newPassword;
-    usersData[putedUserIndex].version += 1;
-    usersData[putedUserIndex].updatedAt = Date.now();
-
-    return response.status(HttpStatus.OK).send(usersData[putedUserIndex]);
+    return this.userService.updateUser(id, dto);
   }
 
   @Delete(':id')
-  async deleteUserById(@Param('id') id: string, @Res() response: Response) {
-    if (!(await isIdValid(id))) {
-      return response
-        .status(HttpStatus.BAD_REQUEST)
-        .send('id parameter is invalid (not uuid)');
-    }
-
-    const deletedUserIndex = usersData.findIndex(
-      (element: UserModel) => element.id === id,
-    );
-
-    if (deletedUserIndex === -1) {
-      return response.status(HttpStatus.NOT_FOUND).send('User not found');
-    }
-
-    usersData.splice(deletedUserIndex, 1);
-
-    return response
-      .status(HttpStatus.NO_CONTENT)
-      .send('User successfully deleted');
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteUserById(@Param('id') id: string) {
+    return this.userService.deleteUser(id);
   }
 }

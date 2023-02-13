@@ -15,3 +15,9 @@ export const getUser = async (
 
   return userModel;
 };
+
+export const getUserWithoutPassword = (user: UserModel) => {
+  const result = Object.assign({}, user);
+  delete result.password;
+  return result;
+}
