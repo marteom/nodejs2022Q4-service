@@ -5,9 +5,6 @@
 .eslintrc.js
 .env
 .env.emample
-tsconfig.json
-test
-tsconfig.build.json
 dist
 build
 node_modules
