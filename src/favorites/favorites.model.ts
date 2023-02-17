@@ -1,5 +1,5 @@
 export class FavoritesModel {
-    artists: string[];
-    albums: string[];
-    tracks: string[];
+  artists: string[];
+  albums: string[];
+  tracks: string[];
 }
