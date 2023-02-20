@@ -14,7 +14,7 @@ git clone {repository URL}
 ## Installing NPM modules
 
 ```
-git checkout dev-2
+git checkout dev-3
 ```
 
 ```
@@ -25,12 +25,10 @@ npm install
 
 Rename .env.example to .env
 
-**Start docker images**:
-```
-docker-compose up
-```
-or 
+## Migrations
+All migrations generates from src/migrations/typeOrm.config.ts file.
 
-```
-docker-compose up -d
-```
+### Scripts
+```npm run migration:generate``` - generate new migration file with template {timestamp}-migrations
+```npm run migration:run``` - run existing migrations for create tables in database.
+
