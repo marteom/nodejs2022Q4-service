@@ -30,5 +30,6 @@ All migrations generates from src/migrations/typeOrm.config.ts file.
 
 ### Scripts
 ```npm run migration:generate``` - generate new migration file with template {timestamp}-migrations
+
 ```npm run migration:run``` - run existing migrations for create tables in database.
 
